@@ -6,15 +6,15 @@ sed -i "s/^.*requiretty/#Defaults requiretty/" /etc/sudoers
 # https://github.com/mitchellh/vagrant/issues/1172#issuecomment-9438465
 echo 'options single-request-reopen' >> /etc/resolv.conf
 
-cat > /etc/yum.repos.d/epel.repo << EOM
-[epel]
-name=epel
-baseurl=http://download.fedoraproject.org/pub/epel/6/\$basearch
-enabled=1
-gpgcheck=0
-EOM
+yum update -y
+yum install -y epel-release make kernel-devel perl dkms man ntp curl lsof ansible gcc
 
-yum -y install gcc make gcc-c++ kernel-devel-`uname -r` zlib-devel openssl-devel readline-devel sqlite-devel perl wget dkms nfs-utils
+# Ansible is on epel so install this after installing epel-release
+yum install -y ansible
 
 # Make ssh faster by not waiting on DNS
 echo "UseDNS no" >> /etc/ssh/sshd_config
+
+# Reboot or Guest Additions won't install due to kernel-devel installation
+reboot
+sleep 30
